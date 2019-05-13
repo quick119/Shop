@@ -1,5 +1,6 @@
 package com.quick.shop
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -10,9 +11,10 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val RC_SIGNUP: Int = 200
-
     var signup = false
+
+    private val RC_NICKNAME: Int = 210
+    private val RC_SIGNUP: Int = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGNUP) {
+            if (resultCode == Activity.RESULT_OK) {
+                val intent = Intent(this, NicknameActivity::class.java)
+                startActivityForResult(intent, RC_NICKNAME)
+            }
+        }
+        if (requestCode == RC_NICKNAME) {
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
