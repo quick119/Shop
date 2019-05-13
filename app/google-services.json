@@ -1,0 +1,64 @@
+{
+  "project_info": {
+    "project_number": "850616870302",
+    "firebase_url": "https://shop-2dc19.firebaseio.com",
+    "project_id": "shop-2dc19",
+    "storage_bucket": "shop-2dc19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850616870302:android:ea4e6b562a6b9f25",
+        "android_client_info": {
+          "package_name": "com.quick.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "850616870302-ukibk9afloae7nfdb5f26ptjmqtqm6gf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quick.shop",
+            "certificate_hash": "b4af69c3acd7466c433aa3f0157e809d3bb6fd96"
+          }
+        },
+        {
+          "client_id": "850616870302-3jgkfbtpp6lute8suh4n8emjis7ps554.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quick.shop",
+            "certificate_hash": "e5e4a7caf38a9c715de1b585c51a1c2f9a964724"
+          }
+        },
+        {
+          "client_id": "850616870302-nt5i1agj38n9lcomnk16mh88g7g0gvnn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quick.shop",
+            "certificate_hash": "645335d397b925a2a1aee909a770e27f6ca0da16"
+          }
+        },
+        {
+          "client_id": "850616870302-4o9b06tggnv4m1cjlvb3fmhh691569hr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmr3mSQwqeYOpmqUe6kQKovDqAYRXtUo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850616870302-4o9b06tggnv4m1cjlvb3fmhh691569hr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
