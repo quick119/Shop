@@ -19,21 +19,30 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
 import org.jetbrains.anko.uiThread
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import java.net.URL
 
 class MovieActivity : AppCompatActivity(), AnkoLogger {
-
-    private val TAG = MovieActivity::class.java.simpleName
-
     var movies:List<Movie>? = null
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.myjson.com/bins/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie)
         //get json
         doAsync {
-            val json = URL("https://api.myjson.com/bins/110j7e").readText()
-            movies = Gson().fromJson<List<Movie>>(json,
-                object : TypeToken<List<Movie>>(){}.type)
+//            val json = URL("https://api.myjson.com/bins/110j7e").readText()
+//            movies = Gson().fromJson<List<Movie>>(json,
+//                object : TypeToken<List<Movie>>(){}.type)
+            val movieService = retrofit.create(MovieService::class.java)
+            movies = movieService.listMovies()
+                .execute()
+                .body()
             movies?.forEach {
                 info("${it.Title} ${it.imdbRating}")
             }
@@ -77,7 +86,6 @@ class MovieActivity : AppCompatActivity(), AnkoLogger {
                 .load(movie.Poster)
                 .override(300)
                 .into(posterImage)
-            Log.d(TAG, "onCreate: ${movie.Poster}")
         }
     }
 }
@@ -107,3 +115,8 @@ data class Movie(
     val imdbVotes: String,
     val totalSeasons: String
 )
+
+interface MovieService {
+    @GET("110j7e")
+    fun listMovies(): Call<List<Movie>>
+}
