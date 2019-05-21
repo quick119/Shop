@@ -23,11 +23,14 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
 
 class MainActivity : AppCompatActivity() {
+
     private val TAG = MainActivity::class.java.simpleName
+
     var signup = false
     val auth = FirebaseAuth.getInstance()
     private val RC_NICKNAME: Int = 210
     private val RC_SIGNUP: Int = 200
+    private val RC_SIGNIN = 100
     val functions = listOf("Camera",
         "Invite friend",
         "Parking",
@@ -116,20 +119,21 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 //        nickname.text = getNickname()
-        FirebaseDatabase.getInstance()
-            .getReference("users")
-            .child(auth.currentUser!!.uid)
-            .child("nickname")
-            .addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
+        if (auth.currentUser != null) {
+            FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(auth.currentUser!!.uid)
+                .child("nickname")
+                .addListenerForSingleValueEvent(object : ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
 
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    nickname.text = dataSnapshot.value as String
-                }
-
-            })
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        nickname.text = dataSnapshot.value as String
+                    }
+                })
+        }
     }
 
     private fun authChanged(auth: FirebaseAuth) {
@@ -166,6 +170,11 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.action_signin -> {
+                startActivityForResult(Intent(this, SignInActivity::class.java),
+                    RC_SIGNIN)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

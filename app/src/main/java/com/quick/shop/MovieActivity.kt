@@ -2,6 +2,7 @@ package com.quick.shop
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,13 +22,16 @@ import org.jetbrains.anko.uiThread
 import java.net.URL
 
 class MovieActivity : AppCompatActivity(), AnkoLogger {
+
+    private val TAG = MovieActivity::class.java.simpleName
+
     var movies:List<Movie>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie)
         //get json
         doAsync {
-            val json = URL("https://api.myjson.com/bins/jskzu").readText()
+            val json = URL("https://api.myjson.com/bins/110j7e").readText()
             movies = Gson().fromJson<List<Movie>>(json,
                 object : TypeToken<List<Movie>>(){}.type)
             movies?.forEach {
@@ -54,7 +58,7 @@ class MovieActivity : AppCompatActivity(), AnkoLogger {
         }
 
         override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-            val movie : Movie? = movies?.get(position)
+            val movie = movies?.get(position)
             holder.bindMovie(movie!!)
         }
 
@@ -73,6 +77,7 @@ class MovieActivity : AppCompatActivity(), AnkoLogger {
                 .load(movie.Poster)
                 .override(300)
                 .into(posterImage)
+            Log.d(TAG, "onCreate: ${movie.Poster}")
         }
     }
 }
