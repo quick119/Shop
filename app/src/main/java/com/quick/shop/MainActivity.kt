@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         "Download coupons",
         "News",
         "Movie",
-        "B",
+        "Bus",
         "News",
         "News",
         "News",
@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             1 -> startActivity(Intent(this, ContactActivity::class.java))
             2 -> startActivity(Intent(this, ParkingActivity::class.java))
             5 -> startActivity(Intent(this, MovieActivity::class.java))
+            6 -> startActivity(Intent(this, BusActivity::class.java))
 
         }
     }
@@ -130,7 +131,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        nickname.text = dataSnapshot.value as String
+                        if (dataSnapshot.value != null)
+                            nickname.text = dataSnapshot.value as String
                     }
                 })
         }
