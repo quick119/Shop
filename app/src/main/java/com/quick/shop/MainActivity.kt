@@ -23,10 +23,9 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.row_function.view.*
 
 class MainActivity : AppCompatActivity() {
-
     private val TAG = MainActivity::class.java.simpleName
-
     var signup = false
+    var cacheService:Intent? = null
     val auth = FirebaseAuth.getInstance()
     private val RC_NICKNAME: Int = 210
     private val RC_SIGNUP: Int = 200
@@ -172,6 +171,13 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.action_cache -> {
+                cacheService = Intent(this, CacheService::class.java)
+                startService(cacheService)
+                startService(Intent(this, CacheService::class.java))
+                startService(Intent(this, CacheService::class.java))
+                true
+            }
             R.id.action_signin -> {
                 startActivityForResult(Intent(this, SignInActivity::class.java),
                     RC_SIGNIN)
@@ -179,5 +185,10 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopService(cacheService)
     }
 }
