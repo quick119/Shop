@@ -2,6 +2,7 @@ package com.quick.shop
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telecom.Call
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +17,29 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
 import org.jetbrains.anko.uiThread
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import java.net.URL
 
 class BusActivity : AppCompatActivity(), AnkoLogger {
     var buses:List<Bus>? = null
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.myjson.com/bins/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bus)
         //get jsond
         doAsync {
-            val json = URL("https://api.myjson.com/bins/1aojef").readText()
-            buses = Gson().fromJson<List<Bus>>(json,
-                object : TypeToken<List<Bus>>(){}.type)
+//            val json = URL("https://api.myjson.com/bins/1aojef").readText()
+//            buses = Gson().fromJson<List<Bus>>(json,
+//                object : TypeToken<List<Bus>>(){}.type)
+            val busService = retrofit.create(BusService::class.java)
+            buses = busService.listBuses()
+                .execute()
+                .body()
             buses?.forEach {
                 info("${it.BusID} ${it.RouteID} ${it.Speed}")
             }
@@ -86,3 +98,8 @@ data class Bus(
     val ledstate: String,
     val sections: String
 )
+
+interface BusService {
+    @GET("1aojef")
+    fun listBuses(): retrofit2.Call<List<Bus>>
+}
