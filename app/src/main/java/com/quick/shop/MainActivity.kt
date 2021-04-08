@@ -80,11 +80,7 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
             }
 
         }
-        //RecyclerView
 
-        recyler.layoutManager = LinearLayoutManager(this)
-        recyler.setHasFixedSize(true)
-        recyler.adapter = FunctionAdapter()
     }
 
     inner class FunctionAdapter() : RecyclerView.Adapter<FunctionHolder>(){
@@ -155,14 +151,16 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGNUP) {
-            if (resultCode == Activity.RESULT_OK) {
-                val intent = Intent(this, NicknameActivity::class.java)
-                startActivityForResult(intent, RC_NICKNAME)
+        if (requestCode == RC_SIGNIN && resultCode == Activity.RESULT_OK) {
+            val user = FirebaseAuth.getInstance().currentUser
+            Log.d(TAG, "onActivityResult: ${user?.uid}")
+            if (user != null) {
+                user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
+                verify_email.visibility = if (user.isEmailVerified) View.GONE else View.VISIBLE
+            } else {
+                user_info.setText("Not login")
+                verify_email.visibility = View.GONE
             }
-        }
-        if (requestCode == RC_NICKNAME) {
-
         }
     }
 
@@ -187,24 +185,13 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
-            R.id.action_cache -> {
-                doAsync {
-                    val json = URL("https://api.myjson.com/bins/110j7e").readText()
-                    val movies = Gson().fromJson<List<Movie>>(json,
-                        object : TypeToken<List<Movie>>(){}.type)
-                    movies.forEach {
-                        startService(intentFor<CacheService>(
-                            "TITLE" to it.Title,
-                            "URL" to it.Poster
-                        ))
-                    }
-                }
-
-                true
-            }
             R.id.action_signin -> {
                 startActivityForResult(Intent(this, SignInActivity::class.java),
                     RC_SIGNIN)
+                true
+            }
+            R.id.action_signout -> {
+                FirebaseAuth.getInstance().signOut()
                 true
             }
             else -> super.onOptionsItemSelected(item)

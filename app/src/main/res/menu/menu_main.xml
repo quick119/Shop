@@ -3,6 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.quick.shop.MainActivity">
     <item android:title="Sign In" android:id="@+id/action_signin"/>
+    <item
+            android:title="Sign Out"
+            android:id="@+id/action_signout" />
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"
