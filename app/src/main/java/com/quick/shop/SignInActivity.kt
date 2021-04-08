@@ -17,13 +17,28 @@ class SignInActivity : AppCompatActivity() {
             signUp()
         }
         login.setOnClickListener {
-            FirebaseAuth.getInstance()
-                .signInWithEmailAndPassword(email.text.toString(),
-                password.text.toString())
-                .addOnCompleteListener{ task ->
-
-                }
+            login()
         }
+    }
+
+    private fun login() {
+        FirebaseAuth.getInstance()
+            .signInWithEmailAndPassword(
+                email.text.toString(),
+                password.text.toString()
+            )
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    setResult(RESULT_OK)
+                    finish()
+                } else {
+                    AlertDialog.Builder(this@SignInActivity)
+                        .setTitle("Login")
+                        .setMessage(task.exception?.message)
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+            }
     }
 
     private fun signUp() {
@@ -34,7 +49,7 @@ class SignInActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     AlertDialog.Builder(this@SignInActivity)
-                        .setTitle("Sign In")
+                        .setTitle("Sign Up")
                         .setMessage("Account created")
                         .setPositiveButton("OK") { dialog, which ->
                             setResult(RESULT_OK)
@@ -42,7 +57,7 @@ class SignInActivity : AppCompatActivity() {
                         }.show()
                 } else {
                     AlertDialog.Builder(this@SignInActivity)
-                        .setTitle("Sign In")
+                        .setTitle("Sign Up")
                         .setMessage(task.exception?.message)
                         .setPositiveButton("OK", null)
                         .show()

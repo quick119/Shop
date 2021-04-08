@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.row_function.view.*
 import org.jetbrains.anko.*
 import java.net.URL
 
-class MainActivity : AppCompatActivity() , AnkoLogger{
+class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener, AnkoLogger{
     private val TAG = MainActivity::class.java.simpleName
     var signup = false
     var cacheService:Intent? = null
@@ -53,18 +53,20 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        /*if (!signup) {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivityForResult(intent, RC_SIGNUP)
-        }*/
-        auth.addAuthStateListener { auth ->
-            authChanged(auth)
-        }
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+        verify_email.setOnClickListener {
+            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Snackbar.make(it, "Verify email sent", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+        }
+
         //Spinner
         val colors = arrayOf("Red", "Green", "Blue")
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, colors)
@@ -80,7 +82,28 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
             }
 
         }
+    }
 
+    override fun onAuthStateChanged(auth: FirebaseAuth) {
+            val user = auth.currentUser
+            Log.d(TAG, "onAuthStateChanged: ${user?.uid}")
+            if (user != null) {
+                user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
+                verify_email.visibility = if (user.isEmailVerified) View.GONE else View.VISIBLE
+            } else {
+                user_info.setText("Not login")
+                verify_email.visibility = View.GONE
+            }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        FirebaseAuth.getInstance().addAuthStateListener(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FirebaseAuth.getInstance().removeAuthStateListener(this)
     }
 
     inner class FunctionAdapter() : RecyclerView.Adapter<FunctionHolder>(){
@@ -140,30 +163,6 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
         }
     }
 
-    private fun authChanged(auth: FirebaseAuth) {
-        if (auth.currentUser == null) {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivityForResult(intent, RC_SIGNUP)
-        } else {
-            Log.d("MainActivity", "authChanged: ${auth.currentUser?.uid}")
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGNIN && resultCode == Activity.RESULT_OK) {
-            val user = FirebaseAuth.getInstance().currentUser
-            Log.d(TAG, "onActivityResult: ${user?.uid}")
-            if (user != null) {
-                user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
-                verify_email.visibility = if (user.isEmailVerified) View.GONE else View.VISIBLE
-            } else {
-                user_info.setText("Not login")
-                verify_email.visibility = View.GONE
-            }
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -196,17 +195,5 @@ class MainActivity : AppCompatActivity() , AnkoLogger{
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val filter = IntentFilter(CacheService.ACTION_CACHE_DONE)
-        registerReceiver(broadcastReceiver, filter)
-    }
-
-    override fun onStop() {
-        super.onStop()
-//        stopService(cacheService)
-        unregisterReceiver(broadcastReceiver)
     }
 }
